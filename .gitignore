@@ -1,0 +1,5 @@
+node_modules
+build/app.js
+*.iml
+.idea
+*.swp
