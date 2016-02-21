@@ -2,23 +2,20 @@ import Bacon from "baconjs";
 import React from "react";
 import ReactDOM from "react-dom";
 
-import recipes from "iba-cocktails-recipes"
-import ingredients from "iba-cocktails-ingredients"
+import Recipes from "iba-cocktails-recipes"
+import Ingredients from "iba-cocktails-ingredients"
 
 require("./styles.less");
 
-const extendedRecipes = recipes.map(r => {
+const extendedRecipes = Recipes.map(r => {
   r.extraVolume = r.ingredients.filter(ing => ing.unit === "cl").reduce((agg, ing) => agg + ing.amount, 0);
-  r.extraBase = r.ingredients.filter(ing => ingredients.hasOwnProperty(ing.ingredient) && ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount)[0].ingredient;
+  r.extraBase = r.ingredients.filter(ing => Ingredients.hasOwnProperty(ing.ingredient) && Ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount)[0].ingredient;
   return r;
 });
 
-const baseOptions = Object.keys(ingredients).filter(k => ingredients[k].abv > 0).sort();
-baseOptions.unshift("Any");
-
-const Recipes = ({recipes}) => (
+const RecipeList = ({recipes}) => (
     <ul>
-      {recipes.map((r, i) => <li key={i}>{r.name}, {r.extraBase}</li>)}
+      {recipes.map((r, i) => <li key={i}>{r.name}</li>)}
     </ul>
 );
 
@@ -38,7 +35,7 @@ const Filters = ({size, sizeOnChange, flavor, flavorOnChange, baseOptions, base,
       <RadioSelect name="flavor" checked={flavor} keyValues={{any: "Any", sour: "Sour", sweet: "Sweet", spiced: "Spiced"}} onChange={flavorOnChange}/>
       <form>
         <label>
-          <select name="base" defaultValue={base} onChange={(e) => baseOnChange(e.target.value)()}>
+          <select name="base" value={base} onChange={(e) => baseOnChange(e.target.value)()}>
             {baseOptions.map((o, i) => <option key={i} value={o}>{o}</option>)}
           </select>
           Base alcohol
@@ -50,14 +47,14 @@ const Filters = ({size, sizeOnChange, flavor, flavorOnChange, baseOptions, base,
 const filterP = Bacon.combineTemplate({
   size: "any",
   flavor: "any",
-  base: baseOptions[0]
+  base: "Any"
 });
 
 const filterB = new Bacon.Bus();
 const filterUpdatesP = filterB.toProperty((f) => f);
 const updateFilter = (filter) => (value) => () => filterB.push((filters) => { filters[filter] = value; return filters; });
 
-const Page = ({filters, recipes}) => (
+const Page = ({filters, recipes, baseOptions}) => (
   <div>
     <Filters
         size={filters.size}
@@ -67,7 +64,7 @@ const Page = ({filters, recipes}) => (
         base={filters.base}
         baseOptions={baseOptions}
         baseOnChange={updateFilter("base")}/>
-    <Recipes recipes={recipes}/>
+    <RecipeList recipes={recipes}/>
   </div>
 );
 
@@ -87,12 +84,24 @@ const applySizeFilters = (filters, recipes) => {
 };
 
 const applyFilters = (filters, recipes) => {
-  return applySizeFilters(filters, applyBaseFilters(filters, recipes));
+  return applySizeFilters(filters, recipes);
 };
 
 filterP
-    .sampledBy(filterUpdatesP, (f, u) => {
-      const newFilters = u(f);
-      return [newFilters, applyFilters(newFilters, extendedRecipes)]
+    .sampledBy(filterUpdatesP, (filters, filterModifier) => {
+      const newFilters = filterModifier(filters);
+      const activeRecipes = applyFilters(newFilters, extendedRecipes);
+
+      const activeBaseIngredients = activeRecipes.reduce((acc, r) => {
+        if (acc.indexOf(r.extraBase) === -1) {
+          acc.push(r.extraBase);
+        }
+        return acc;
+      }, []);
+
+      const baseOptions = activeBaseIngredients.filter(k => Ingredients.hasOwnProperty(k) && Ingredients[k].abv > 0).sort();
+      baseOptions.unshift("Any");
+
+      return [newFilters, applyBaseFilters(newFilters, activeRecipes), baseOptions];
     })
-    .onValues((filters, recipes) => ReactDOM.render(<Page filters={filters} recipes={recipes}/>, document.getElementById("main")));
+    .onValues((filters, recipes, baseOptions) => ReactDOM.render(<Page filters={filters} recipes={recipes} baseOptions={baseOptions}/>, document.getElementById("main")));
