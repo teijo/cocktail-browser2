@@ -25,6 +25,7 @@ const weightedTaste = (r) => {
 };
 
 const extendedRecipes = Recipes.map(r => {
+  r.ingredients = r.ingredients.sort((a, b) => a.amount < b.amount);
   r.extraVolume = r.ingredients.filter(ing => ing.unit === "cl").reduce((agg, ing) => agg + ing.amount, 0);
   r.extraBase = r.ingredients.filter(ing => Ingredients.hasOwnProperty(ing.ingredient) && Ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount)[0].ingredient;
   r.extraTaste = weightedTaste(r);
@@ -33,7 +34,20 @@ const extendedRecipes = Recipes.map(r => {
 
 const RecipeList = ({recipes}) => (
     <ul>
-      {recipes.map((r, i) => <li key={i}>{r.name}</li>)}
+      {recipes.map((r, i) => <li key={i}>{r.name}
+        <ul>
+          {r.ingredients.filter(ing => ing.hasOwnProperty("ingredient")).map((ing, i) => <li key={i}>{ing.label || ing.ingredient}</li>)}
+          <li>
+            {r.ingredients
+                .filter(ing => ing.hasOwnProperty("ingredient"))
+                .reduce((acc, ing) => {
+                  acc.push(ing.amount);
+                  return acc;
+                }, [])
+                .join(" : ")}
+          </li>
+        </ul>
+      </li>)}
     </ul>
 );
 
