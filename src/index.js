@@ -7,9 +7,28 @@ import Ingredients from "iba-cocktails-ingredients"
 
 require("./styles.less");
 
+const weightedTaste = (r) => {
+  const tastes = r.ingredients
+      .filter(ing => Ingredients.hasOwnProperty(ing.ingredient) && Ingredients[ing.ingredient].taste !== null)
+      .reduce((acc, ing) => {
+        const taste = Ingredients[ing.ingredient].taste;
+        if (!acc.hasOwnProperty(taste)) {
+          acc[taste] = 0;
+        }
+        acc[taste] += ing.amount;
+        return acc;
+      }, {});
+  const dominantTaste = Object.keys(tastes).reduce((acc, t) => {
+    return tastes[t] > acc.amount ? {taste: t, amount: tastes[t]} : acc;
+  }, {taste: null, amount: 0});
+  return dominantTaste.taste;
+};
+
 const extendedRecipes = Recipes.map(r => {
   r.extraVolume = r.ingredients.filter(ing => ing.unit === "cl").reduce((agg, ing) => agg + ing.amount, 0);
   r.extraBase = r.ingredients.filter(ing => Ingredients.hasOwnProperty(ing.ingredient) && Ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount)[0].ingredient;
+  r.extraTaste = weightedTaste(r);
+  console.log(r.extraTaste);
   return r;
 });
 
@@ -29,10 +48,10 @@ const RadioSelect = ({name, checked, keyValues, onChange}) => (
     </form>
 );
 
-const Filters = ({size, sizeOnChange, flavor, flavorOnChange, baseOptions, base, baseOnChange}) => (
+const Filters = ({size, sizeOnChange, taste, tasteOnChange, baseOptions, base, baseOnChange}) => (
     <nav>
       <RadioSelect name="size" checked={size} keyValues={{any: "Any", long: "Long", short: "Short"}} onChange={sizeOnChange}/>
-      <RadioSelect name="flavor" checked={flavor} keyValues={{any: "Any", sour: "Sour", sweet: "Sweet", spiced: "Spiced"}} onChange={flavorOnChange}/>
+      <RadioSelect name="taste" checked={taste} keyValues={{any: "Any", sour: "Sour", sweet: "Sweet", bitter: "Bitter", salty: "Salty"}} onChange={tasteOnChange}/>
       <form>
         <label>
           <select name="base" value={base} onChange={(e) => baseOnChange(e.target.value)()}>
@@ -46,7 +65,7 @@ const Filters = ({size, sizeOnChange, flavor, flavorOnChange, baseOptions, base,
 
 const filterP = Bacon.combineTemplate({
   size: "any",
-  flavor: "any",
+  taste: "any",
   base: "Any"
 });
 
@@ -59,8 +78,8 @@ const Page = ({filters, recipes, baseOptions}) => (
     <Filters
         size={filters.size}
         sizeOnChange={updateFilter("size")}
-        flavor={filters.flavor}
-        flavorOnChange={updateFilter("flavor")}
+        taste={filters.taste}
+        tasteOnChange={updateFilter("taste")}
         base={filters.base}
         baseOptions={baseOptions}
         baseOnChange={updateFilter("base")}/>
@@ -83,8 +102,12 @@ const applySizeFilters = (filters, recipes) => {
   }
 };
 
+const applyTasteFilters = (filters, recipes) => {
+  return (filters.taste === "any") ? recipes : recipes.filter(r => r.extraTaste === filters.taste);
+};
+
 const applyFilters = (filters, recipes) => {
-  return applySizeFilters(filters, recipes);
+  return applySizeFilters(filters, applyTasteFilters(filters, recipes));
 };
 
 filterP
