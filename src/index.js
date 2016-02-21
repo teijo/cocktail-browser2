@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 import recipes from "iba-cocktails-recipes"
 import ingredients from "iba-cocktails-ingredients"
 
+require("./styles.less");
+
 const extendedRecipes = recipes.map(r => {
   r.extraVolume = r.ingredients.filter(ing => ing.unit === "cl").reduce((agg, ing) => agg + ing.amount, 0);
   r.extraBase = r.ingredients.filter(ing => ingredients.hasOwnProperty(ing.ingredient) && ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount)[0].ingredient;
