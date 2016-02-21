@@ -3,10 +3,16 @@ label {
     display: inline-block;
 }
 
-li > ul > li {
+li > ul.summary > li {
     list-style: none;
     display: inline-block;
     padding-right: 10px;
+    font-size: small;
+}
+
+li > ul.details > li {
+    list-style: none;
+    padding-left: 10px;
     font-size: small;
 }
 
@@ -23,4 +29,12 @@ form > p {
 
 form > label {
     vertical-align: middle;
+}
+
+#recipeList > li {
+    cursor: pointer;
+}
+
+#recipeList > li:hover {
+    background-color: #EEE;
 }

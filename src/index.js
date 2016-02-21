@@ -32,10 +32,19 @@ const extendedRecipes = Recipes.map(r => {
   return r;
 });
 
-const RecipeList = ({recipes}) => (
-    <ul>
-      {recipes.map((r, i) => <li key={i}>{r.name}
-        <ul>
+const RecipeItem = React.createClass({
+  getInitialState() {
+    return {
+      focus: false
+    }
+  },
+  toggleFocus() {
+    this.setState({focus: !this.state.focus});
+  },
+  render() {
+    const r = this.props.recipe;
+    const element = !this.state.focus ? (
+        <ul className="summary">
           {r.ingredients.filter(ing => ing.hasOwnProperty("ingredient")).map((ing, i) => <li key={i}>{ing.label || ing.ingredient}</li>)}
           <li>
             {r.ingredients
@@ -47,7 +56,29 @@ const RecipeList = ({recipes}) => (
                 .join(" : ")}
           </li>
         </ul>
-      </li>)}
+    ) : (
+        <div className="details">
+          <p>Ingredients:</p>
+          <ul>
+            {r.ingredients.map((ing, i) => <li key={i}>{ing.special || ing.label || ing.ingredient} {ing.amount} {ing.unit}</li>)}
+          </ul>
+          {r.glass ? <p>Glass: {r.glass}</p> : null}
+          <p>Preparation: {r.preparation}</p>
+          {r.garnish ? <p>Garnish: {r.garnish}</p> : null}
+        </div>
+    );
+
+    return (
+        <li onClick={this.toggleFocus}>{r.name}
+          {element}
+        </li>
+    );
+  }
+});
+
+const RecipeList = ({recipes}) => (
+    <ul id="recipeList">
+      {recipes.map((r, i) => <RecipeItem key={r.name} recipe={r}/>)}
     </ul>
 );
 
