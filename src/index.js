@@ -51,8 +51,9 @@ const RecipeList = ({recipes}) => (
     </ul>
 );
 
-const RadioSelect = ({name, checked, keyValues, onChange}) => (
+const RadioSelect = ({title, name, checked, keyValues, onChange}) => (
     <form>
+      <p>{title}</p>
       {Object.keys(keyValues).map((key, i) => (
         <label key={i}>
           <input type="radio" name={name} value={key} onChange={onChange(key)} checked={checked === key}/>{keyValues[key]}
@@ -61,18 +62,22 @@ const RadioSelect = ({name, checked, keyValues, onChange}) => (
     </form>
 );
 
+const DropdownSelect = ({title, options, selected, onChange}) => (
+    <form>
+      <p>{title}</p>
+      <label>
+        <select name="base" value={selected} onChange={onChange}>
+          {Object.keys(options).map((k, i) => <option key={i} value={k}>{options[k]}</option>)}
+        </select>
+      </label>
+    </form>
+);
+
 const Filters = ({size, sizeOnChange, taste, tasteOnChange, baseOptions, base, baseOnChange}) => (
     <nav>
-      <RadioSelect name="size" checked={size} keyValues={{any: "Any", long: "Long", short: "Short"}} onChange={sizeOnChange}/>
-      <RadioSelect name="taste" checked={taste} keyValues={{any: "Any", sour: "Sour", sweet: "Sweet", bitter: "Bitter", salty: "Salty"}} onChange={tasteOnChange}/>
-      <form>
-        <label>
-          <select name="base" value={base} onChange={(e) => baseOnChange(e.target.value)()}>
-            {Object.keys(baseOptions).map((k, i) => <option key={i} value={k}>{baseOptions[k]}</option>)}
-          </select>
-          Base alcohol
-        </label>
-      </form>
+      <RadioSelect title="Size" name="size" checked={size} keyValues={{any: "Any", long: "Long", short: "Short"}} onChange={sizeOnChange}/>
+      <RadioSelect title="Taste" name="taste" checked={taste} keyValues={{any: "Any", sour: "Sour", sweet: "Sweet", bitter: "Bitter", salty: "Salty"}} onChange={tasteOnChange}/>
+      <DropdownSelect title="Primary alcohol" options={baseOptions} selected={base} onChange={(e) => baseOnChange(e.target.value)()}/>
     </nav>
 );
 
