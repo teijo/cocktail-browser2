@@ -55,7 +55,7 @@ const Filters = ({size, sizeOnChange, taste, tasteOnChange, baseOptions, base, b
       <form>
         <label>
           <select name="base" value={base} onChange={(e) => baseOnChange(e.target.value)()}>
-            {baseOptions.map((o, i) => <option key={i} value={o}>{o}</option>)}
+            {Object.keys(baseOptions).map((k, i) => <option key={i} value={k}>{baseOptions[k]}</option>)}
           </select>
           Base alcohol
         </label>
@@ -116,21 +116,25 @@ filterP
       const activeRecipes = applyFilters(newFilters, extendedRecipes);
 
       const activeBaseIngredients = activeRecipes.reduce((acc, r) => {
-        if (acc.indexOf(r.extraBase) === -1) {
-          acc.push(r.extraBase);
+        if (!acc.hasOwnProperty(r.extraBase)) {
+          acc[r.extraBase] = 0;
         }
+        acc[r.extraBase]++;
         return acc;
-      }, []);
+      }, {"Any": activeRecipes.length});
 
       const filteredRecipes = applyBaseFilters(newFilters, activeRecipes);
 
-      const baseOptions = activeBaseIngredients.filter(k => Ingredients.hasOwnProperty(k) && Ingredients[k].abv > 0).sort();
+      const baseOptions = Object.keys(activeBaseIngredients).filter(k => Ingredients.hasOwnProperty(k) && Ingredients[k].abv > 0).sort();
       if (filteredRecipes.length === 0) {
         // Filtering caused zero results but we want to show it in the list as selected
         baseOptions.unshift(newFilters.base);
       }
       baseOptions.unshift("Any");
 
-      return [newFilters, filteredRecipes, baseOptions];
+      return [newFilters, filteredRecipes, baseOptions.reduce((acc, b) => {
+        acc[b] = `${b} (${activeBaseIngredients[b] || 0})`;
+        return acc;
+      }, {})];
     })
     .onValues((filters, recipes, baseOptions) => ReactDOM.render(<Page filters={filters} recipes={recipes} baseOptions={baseOptions}/>, document.getElementById("main")));
