@@ -25,9 +25,9 @@ const weightedTaste = (r) => {
 };
 
 const extendedRecipes = Recipes.map(r => {
-  r.ingredients = r.ingredients.sort((a, b) => a.amount < b.amount);
+  r.ingredients = r.ingredients.sort((a, b) => a.amount < b.amount ? 1 : -1);
   r.extraVolume = r.ingredients.filter(ing => ing.unit === "cl").reduce((agg, ing) => agg + ing.amount, 0);
-  r.extraBase = r.ingredients.filter(ing => Ingredients.hasOwnProperty(ing.ingredient) && Ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount)[0].ingredient;
+  r.extraBase = r.ingredients.filter(ing => Ingredients.hasOwnProperty(ing.ingredient) && Ingredients[ing.ingredient].abv > 0).sort((a, b) => a.amount > b.amount ? -1 : 1)[0].ingredient;
   r.extraTaste = weightedTaste(r);
   return r;
 });
@@ -181,7 +181,7 @@ filterP
       }
       baseOptions.unshift("Any");
 
-      return [newFilters, filteredRecipes, baseOptions.reduce((acc, b) => {
+      return [newFilters, filteredRecipes.sort((a, b) => a.name > b.name ? 1 : -1), baseOptions.reduce((acc, b) => {
         acc[b] = `${b} (${activeBaseIngredients[b] || 0})`;
         return acc;
       }, {})];
