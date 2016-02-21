@@ -122,9 +122,15 @@ filterP
         return acc;
       }, []);
 
+      const filteredRecipes = applyBaseFilters(newFilters, activeRecipes);
+
       const baseOptions = activeBaseIngredients.filter(k => Ingredients.hasOwnProperty(k) && Ingredients[k].abv > 0).sort();
+      if (filteredRecipes.length === 0) {
+        // Filtering caused zero results but we want to show it in the list as selected
+        baseOptions.unshift(newFilters.base);
+      }
       baseOptions.unshift("Any");
 
-      return [newFilters, applyBaseFilters(newFilters, activeRecipes), baseOptions];
+      return [newFilters, filteredRecipes, baseOptions];
     })
     .onValues((filters, recipes, baseOptions) => ReactDOM.render(<Page filters={filters} recipes={recipes} baseOptions={baseOptions}/>, document.getElementById("main")));
