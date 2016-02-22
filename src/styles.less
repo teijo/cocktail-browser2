@@ -1,5 +1,4 @@
 label {
-    padding: 10px;
     display: inline-block;
 }
 
@@ -22,13 +21,21 @@ li > ul {
 
 form > p {
     display: inline-block;
-    vertical-align: middle;
-    width: 60px;
     margin: 0;
 }
 
-form > label {
-    vertical-align: middle;
+form label {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    @media (max-width: 400px) {
+        flex: 1;
+        flex-direction: column;
+    }
+}
+
+input[type=radio] {
+    margin: 10px;
 }
 
 #recipeList {
@@ -53,4 +60,14 @@ form > label {
 
 .details > p:last-child {
     margin-bottom: 0;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: row;
+}
+
+select {
+    width: ~"calc(100% - 20px)";
+    margin: 10px;
 }

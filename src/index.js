@@ -85,22 +85,22 @@ const RecipeList = ({recipes}) => (
 const RadioSelect = ({title, name, checked, keyValues, onChange}) => (
     <form>
       <p>{title}</p>
+      <div className="inputGroup">
       {Object.keys(keyValues).map((key, i) => (
         <label key={i}>
           <input type="radio" name={name} value={key} onChange={onChange(key)} checked={checked === key}/>{keyValues[key]}
         </label>
       ))}
+      </div>
     </form>
 );
 
 const DropdownSelect = ({title, options, selected, onChange}) => (
     <form>
       <p>{title}</p>
-      <label>
-        <select name="base" value={selected} onChange={onChange}>
-          {Object.keys(options).map((k, i) => <option key={i} value={k}>{options[k]}</option>)}
-        </select>
-      </label>
+      <select name="base" value={selected} onChange={onChange}>
+        {Object.keys(options).map((k, i) => <option key={i} value={k}>{options[k]}</option>)}
+      </select>
     </form>
 );
 
