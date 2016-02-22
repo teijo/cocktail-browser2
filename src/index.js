@@ -69,7 +69,7 @@ const RecipeItem = React.createClass({
     );
 
     return (
-        <li onClick={this.toggleFocus}>{r.name}
+        <li className={this.state.focus ? "open" : null} onClick={this.toggleFocus}>{r.name}
           {element}
         </li>
     );
