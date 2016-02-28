@@ -62,13 +62,13 @@ const RecipeItem = React.createClass({
           <ul>
             {r.ingredients.map((ing, i) => (
                 <li key={i}>
-                  <span className="amount">{ing.amount} {ing.unit}</span>
-                  {ing.special || ing.label || ing.ingredient}
+                  <span className="amount">{ing.unit === "cl" ? `${ing.amount} ${ing.unit}` : null}</span>
+                  <span>{ing.special || ing.label || ing.ingredient}</span>
                 </li>
             ))}
           </ul>
-          {r.glass ? <p>Glass: {r.glass}</p> : null}
-          <p>Preparation: {r.preparation}</p>
+          {r.glass ? <p>{`Glass: ${r.glass}`}</p> : null}
+          <p>{`Preparation: ${r.preparation}`}</p>
           {r.garnish ? <p>Garnish: {r.garnish}</p> : null}
         </div>
     );
