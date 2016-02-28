@@ -5,6 +5,7 @@ body {
 nav {
     background-color: #EEE;
     padding: 5px 15px;
+    font-family: 'Josefin Slab', serif;
 }
 
 nav > form:last-child {
@@ -19,7 +20,7 @@ li > ul.summary > li {
     list-style: none;
     display: inline-block;
     padding-right: 10px;
-    font-size: small;
+    font-family: 'Josefin Slab', serif;
 }
 
 li > ul.details > li {
@@ -32,9 +33,17 @@ li > ul {
     padding: 0;
 }
 
+li > h2 {
+    font-family: "Dancing Script", cursive;
+    font-weight: normal;
+    margin: 0;
+    font-size: 20px;
+}
+
 form > p {
     display: inline-block;
     margin: 0;
+    font-weight: bold;
 }
 
 form {
@@ -64,17 +73,37 @@ input[type=radio] {
 #recipeList > li {
     cursor: pointer;
     padding: 10px;
-    border: 1px solid transparent;
-    border-left: none;
-    border-right: none;
 
     &.open {
-        border-color: #000;
     }
 }
 
 .details > p:last-child {
     margin-bottom: 0;
+}
+
+.details > p:first-child {
+    margin-top: 0;
+}
+
+.details {
+    font-family: 'Josefin Slab', serif;
+    padding-left: 25px;
+    margin-left: -25px;
+    border-left: 1px solid #000;
+
+    ul {
+        padding-left: 0;
+        li {
+            list-style: none;
+            .amount {
+                width: 50px;
+                display: inline-block;
+                text-align: right;
+                margin-right: 10px;
+            }
+        }
+    }
 }
 
 .inputGroup {
@@ -85,6 +114,7 @@ input[type=radio] {
 select {
     width: ~"calc(100% - 20px)";
     margin: 10px;
+    font-size: 16px;
 }
 
 footer {

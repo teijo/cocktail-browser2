@@ -60,7 +60,12 @@ const RecipeItem = React.createClass({
         <div className="details">
           <p>Ingredients:</p>
           <ul>
-            {r.ingredients.map((ing, i) => <li key={i}>{ing.special || ing.label || ing.ingredient} {ing.amount} {ing.unit}</li>)}
+            {r.ingredients.map((ing, i) => (
+                <li key={i}>
+                  <span className="amount">{ing.amount} {ing.unit}</span>
+                  {ing.special || ing.label || ing.ingredient}
+                </li>
+            ))}
           </ul>
           {r.glass ? <p>Glass: {r.glass}</p> : null}
           <p>Preparation: {r.preparation}</p>
@@ -69,7 +74,7 @@ const RecipeItem = React.createClass({
     );
 
     return (
-        <li className={this.state.focus ? "open" : null} onClick={this.toggleFocus}>{r.name}
+        <li className={this.state.focus ? "open" : null} onClick={this.toggleFocus}><h2>{r.name}</h2>
           {element}
         </li>
     );
