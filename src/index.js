@@ -93,7 +93,9 @@ const RadioSelect = ({title, name, checked, keyValues, onChange}) => (
       <div className="inputGroup">
       {Object.keys(keyValues).map((key, i) => (
         <label key={i}>
-          <input type="radio" name={name} value={key} onChange={onChange(key)} checked={checked === key}/>{keyValues[key]}
+          <input type="radio" name={name} value={key} onChange={onChange(key)} checked={checked === key}/>
+          <span/>
+          <span>{keyValues[key]}</span>
         </label>
       ))}
       </div>

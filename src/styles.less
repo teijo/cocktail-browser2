@@ -1,3 +1,5 @@
+@topBgColor: #EEE;
+
 body {
     margin: 0;
 }
@@ -6,13 +8,14 @@ h1 {
     font-family: "Dancing Script", cursive;
     padding: 5px;
     margin: 0;
-    background-color: #EEE;
+    background-color: @topBgColor;
     text-align: center;
     font-weight: normal;
+    color: #603;
 }
 
 nav {
-    background-color: #EEE;
+    background-color: @topBgColor;
     padding: 5px 15px;
     font-family: 'Josefin Slab', serif;
 }
@@ -22,7 +25,61 @@ nav > form:last-child {
 }
 
 label {
+    @selectedColor: #903;
+
     display: inline-block;
+    margin: 5px;
+    position: relative;
+    input[type=radio] {
+        display: none;
+        + span {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            display: inline-block;
+            position: relative;
+            // Radio button marker
+            &:before {
+                transition: all .2s;
+                display: block;
+                width: 18px;
+                height: 18px;
+                margin: 6px;
+                background-color: rgba(255,0,0,0.0);
+                border-radius: 10px;
+                content: "";
+                position: absolute;
+            }
+            // Radio button circle
+            &:after {
+                transition: all .2s;
+                display: block;
+                width: 20px;
+                height: 20px;
+                background-color: transparent;
+                border-radius: 15px;
+                content: "";
+                border: 5px solid #999;
+                position: absolute;
+            }
+        }
+    }
+    input[type=radio]:checked  {
+        ~ span {
+            color: @selectedColor;
+        }
+        + span {
+            &:before {
+                background-color: @selectedColor;
+                width: 10px;
+                height: 10px;
+                margin: 10px;
+            }
+            &:after {
+                border: 5px solid @selectedColor;
+            }
+        }
+    }
 }
 
 li > ul.summary > li {
