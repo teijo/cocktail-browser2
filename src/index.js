@@ -129,6 +129,7 @@ const updateFilter = (filter) => (value) => () => filterB.push((filters) => { fi
 
 const Page = ({filters, recipes, baseOptions}) => (
   <div>
+    <h1>Cocktail Browser</h1>
     <Filters
         size={filters.size}
         sizeOnChange={updateFilter("size")}
